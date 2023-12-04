@@ -1,0 +1,35 @@
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: sql-policy
+spec:
+  module: registry://c8n.io/vfarcic/kubewarden-crossplane-sql:v0.0.2
+  rules:
+  - apiGroups: ["devopstoolkitseries.com"]
+    apiVersions: ["v1alpha1"]
+    resources: ["sqlclaims", "sqls"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+  settings:
+    allowed_sizes: ["small", "medium", "large"]
+---
+apiVersion: policies.kubewarden.io/v1
+kind: AdmissionPolicy
+metadata:
+  name: sql-policy-no-small
+  namespace: production
+spec:
+  module: registry://c8n.io/vfarcic/kubewarden-crossplane-sql:v0.0.2
+  rules:
+  - apiGroups: ["devopstoolkitseries.com"]
+    apiVersions: ["v1alpha1"]
+    resources: ["sqlclaims", "sqls"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+  settings:
+    allowed_sizes: ["medium", "large"]
